@@ -335,4 +335,4 @@ const CampaignList = () => {
     );
 };
 
-export default CampaignList;
+export default CampaignList;.
