@@ -1,0 +1,165 @@
+/* Sipariş Detay Fişi - Sağdan Açılan Panel İçin Düzenli Tek Sütun Tasarım */
+
+.order-receipt {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #2c3e50;
+  /* Tüm içeriklerin yukarıdan aşağı tek sütun halinde akması için */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Her ana blok (başlık, müşteri bilgisi, adres, ödeme, ürünler, toplamlar, durum)
+   tek satır (full width) kaplasın, yan yana gelmesin */
+.order-receipt > * {
+  width: 100%;
+}
+
+.receipt-header {
+  text-align: left;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e9f0;
+  padding-bottom: 10px;
+}
+
+.receipt-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.receipt-id {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.receipt-customer-info,
+.receipt-address,
+.receipt-payment,
+.receipt-items,
+.receipt-totals,
+.receipt-status {
+  margin-bottom: 14px;
+}
+
+.receipt-customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.receipt-customer-info .info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.receipt-address p,
+.receipt-payment p,
+.receipt-totals p,
+.receipt-status p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+}
+
+.receipt-address strong,
+.receipt-payment strong,
+.receipt-totals strong,
+.receipt-status strong {
+  font-weight: 600;
+}
+
+.receipt-divider {
+  height: 1px;
+  background: #e5e9f0;
+  margin: 10px 0 14px 0;
+}
+
+.receipt-items h4 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.items-table th,
+.items-table td {
+  padding: 6px 4px;
+  text-align: left;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.items-table thead th {
+  background-color: #f7fafc;
+  font-weight: 600;
+}
+
+.items-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.no-items {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.receipt-totals .receipt-total {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.status-pending {
+  background-color: #f39c12;
+}
+
+.status-preparing {
+  background-color: #1abc9c;
+}
+
+.status-on_the_way {
+  background-color: #9b59b6;
+}
+
+.status-delivered {
+  background-color: #2ecc71;
+}
+
+.status-cancelled {
+  background-color: #e74c3c;
+}
+
+/* Küçük ekranlar için uyum */
+@media (max-width: 480px) {
+  .order-receipt {
+    padding: 16px 18px;
+  }
+
+  .items-table th,
+  .items-table td {
+    padding: 4px 3px;
+  }
+}
+
+

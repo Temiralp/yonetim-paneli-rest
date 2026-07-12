@@ -1,0 +1,616 @@
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../../../context/AuthContext";
+import api from "../../../services/api";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Upload,
+  Select,
+  Card,
+  Space,
+  Divider,
+} from "antd";
+import {
+  PlusOutlined,
+  MinusCircleOutlined,
+  UploadOutlined,
+  ArrowLeftOutlined,
+} from "@ant-design/icons";
+import Sidebar from "../Sidebar";
+import "../Orders.css";
+
+const { TextArea } = Input;
+const { Option } = Select;
+
+const MenuForm = () => {
+  const { admin } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = !!id;
+
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [fileList, setFileList] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [originalPrice, setOriginalPrice] = useState(0);
+  const [menuPrice, setMenuPrice] = useState(0);
+  const [discount, setDiscount] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSidebarOpen(window.innerWidth > 1024);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!admin) {
+      navigate("/admin/login");
+    }
+  }, [admin, navigate]);
+
+  useEffect(() => {
+    fetchProducts();
+    if (isEditMode) {
+      fetchMenuData();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    calculatePrices();
+  }, [selectedProducts, menuPrice]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await api.get("/api/products");
+      setProducts(response.data.data || []);
+    } catch (error) {
+      message.error("Ürünler yüklenirken bir hata oluştu");
+      console.error(error);
+    }
+  };
+
+  const fetchMenuData = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(`/api/menus/${id}`);
+      const menu = response.data.data;
+
+      form.setFieldsValue({
+        name: menu.name,
+        description: menu.description,
+        price: menu.price,
+        is_active: menu.is_active,
+      });
+
+      setMenuPrice(menu.price);
+
+      if (menu.items && menu.items.length > 0) {
+        const items = menu.items.map(item => ({
+          product_id: item.product_id,
+          product_name: item.product_name,
+          product_price: item.product_price,
+          quantity: item.quantity,
+        }));
+        setSelectedProducts(items);
+      }
+
+      if (menu.image_url) {
+        setFileList([
+          {
+            uid: "-1",
+            name: "menu-image.jpg",
+            status: "done",
+            url: `${api.defaults.baseURL}${menu.image_url}`,
+          },
+        ]);
+      }
+    } catch (error) {
+      message.error("Menü bilgileri yüklenirken bir hata oluştu");
+      console.error(error);
+    }
+    setLoading(false);
+  };
+
+  const calculatePrices = () => {
+    const total = selectedProducts.reduce(
+      (sum, item) => sum + (item.product_price || 0) * (item.quantity || 1),
+      0
+    );
+    setOriginalPrice(total);
+    setDiscount(total - menuPrice);
+  };
+
+  const handleAddProduct = (productId) => {
+    const product = products.find((p) => p.id === productId);
+    if (!product) return;
+
+    const existingProduct = selectedProducts.find(
+      (p) => p.product_id === productId
+    );
+
+    if (existingProduct) {
+      message.warning("Bu ürün zaten eklenmiş");
+      return;
+    }
+
+    const newProduct = {
+      product_id: product.id,
+      product_name: product.name,
+      product_price: parseFloat(product.base_price) || 0,
+      quantity: 1,
+    };
+
+    setSelectedProducts([...selectedProducts, newProduct]);
+  };
+
+  const handleRemoveProduct = (productId) => {
+    setSelectedProducts(
+      selectedProducts.filter((p) => p.product_id !== productId)
+    );
+  };
+
+  const handleQuantityChange = (productId, quantity) => {
+    setSelectedProducts(
+      selectedProducts.map((p) =>
+        p.product_id === productId ? { ...p, quantity: quantity || 1 } : p
+      )
+    );
+  };
+
+  const handleSubmit = async (values) => {
+    if (selectedProducts.length === 0) {
+      message.error("En az 1 ürün seçmelisiniz");
+      return;
+    }
+
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("description", values.description || "");
+    formData.append("price", values.price);
+    formData.append("original_price", originalPrice);
+    formData.append("discount_amount", discount);
+    formData.append("is_active", values.is_active ? 1 : 0);
+    formData.append(
+      "items",
+      JSON.stringify(
+        selectedProducts.map((p) => ({
+          product_id: p.product_id,
+          quantity: p.quantity,
+        }))
+      )
+    );
+
+    if (fileList.length > 0 && fileList[0].originFileObj) {
+      formData.append("image", fileList[0].originFileObj);
+    }
+
+    try {
+      if (isEditMode) {
+        await api.put(`/api/menus/${id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        message.success("Menü başarıyla güncellendi");
+      } else {
+        await api.post("/api/menus", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        message.success("Menü başarıyla oluşturuldu");
+      }
+      navigate("/admin/menus");
+    } catch (error) {
+      message.error(
+        isEditMode
+          ? "Menü güncellenirken bir hata oluştu"
+          : "Menü oluşturulurken bir hata oluştu"
+      );
+      console.error(error);
+    }
+    setLoading(false);
+  };
+
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name &&
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      p.is_active
+  );
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const uploadProps = {
+    fileList,
+    beforeUpload: (file) => {
+      const isImage = file.type.startsWith("image/");
+      if (!isImage) {
+        message.error("Sadece resim dosyaları yükleyebilirsiniz");
+        return false;
+      }
+      const isLt5M = file.size / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        message.error("Resim 5MB'dan küçük olmalıdır");
+        return false;
+      }
+      setFileList([file]);
+      return false;
+    },
+    onRemove: () => {
+      setFileList([]);
+    },
+  };
+
+  return (
+    <div className="admin-orders">
+      <header className="header">
+        <button className="menu-toggle" onClick={toggleSidebar}>
+          <svg
+            width="24px"
+            height="24px"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={isSidebarOpen ? "menu-icon-open" : "menu-icon-closed"}
+          >
+            <path
+              className="line1"
+              d="M4 6H20"
+              stroke="#fff"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              className="line2"
+              d="M4 12H14"
+              stroke="#fff"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              className="line3"
+              d="M4 18H9"
+              stroke="#fff"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        <h1 className="header-title">
+          {isEditMode ? "Menü Düzenle" : "Yeni Kombo Menü"}
+        </h1>
+      </header>
+
+      <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
+        <div className="sidebar-header">
+          <h2 className="sidebar-title">Admin</h2>
+          <button className="close-sidebar" onClick={toggleSidebar}>
+            ✕
+          </button>
+        </div>
+        <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      </aside>
+
+      <main
+        className={`main-content ${
+          isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+        }`}
+      >
+        <section className="orders-section">
+          <div style={{ padding: "24px" }}>
+            <Button
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate("/admin/menus")}
+              style={{ marginBottom: "24px" }}
+            >
+              Geri
+            </Button>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "24px",
+              }}
+            >
+              <Card title="Ürün Listesi" style={{ height: "fit-content" }}>
+                <Input
+                  placeholder="Ürünlerde ara..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ marginBottom: "16px" }}
+                />
+                <div
+                  style={{
+                    maxHeight: "500px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {filteredProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "12px",
+                        borderBottom: "1px solid #f0f0f0",
+                        cursor: "pointer",
+                        transition: "background-color 0.2s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#f9f9f9";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            display: "inline-block",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "50%",
+                            backgroundColor: "#1890ff",
+                            color: "white",
+                            textAlign: "center",
+                            lineHeight: "32px",
+                            marginRight: "12px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {product.name ? product.name.charAt(0).toUpperCase() : "?"}
+                        </div>
+                        <span style={{ fontWeight: "500" }}>
+                          {product.name}
+                        </span>
+                        <div
+                          style={{
+                            fontSize: "12px",
+                            color: "#999",
+                            marginLeft: "44px",
+                          }}
+                        >
+                          {parseFloat(product.base_price || 0).toFixed(2)} TL
+                        </div>
+                      </div>
+                      <Button
+                        type="text"
+                        icon={<PlusOutlined />}
+                        onClick={() => handleAddProduct(product.id)}
+                        disabled={selectedProducts.some(
+                          (p) => p.product_id === product.id
+                        )}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <div>
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={handleSubmit}
+                  initialValues={{
+                    is_active: true,
+                    price: 0,
+                  }}
+                >
+                  <Card title="Menü Bilgileri">
+                    <Form.Item
+                      name="name"
+                      label="MENÜ ADI"
+                      rules={[
+                        { required: true, message: "Menü adı zorunludur" },
+                      ]}
+                    >
+                      <Input placeholder="4lü menü" size="large" />
+                    </Form.Item>
+
+                    <Form.Item name="description" label="AÇIKLAMA">
+                      <TextArea
+                        placeholder="4 kişilik doyuran menü"
+                        rows={2}
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="price"
+                      label="MENÜ FİYATI (TL)"
+                      rules={[
+                        { required: true, message: "Menü fiyatı zorunludur" },
+                      ]}
+                    >
+                      <InputNumber
+                        min={0}
+                        style={{ width: "100%" }}
+                        size="large"
+                        onChange={(value) => setMenuPrice(value || 0)}
+                      />
+                    </Form.Item>
+
+                    <Divider />
+
+                    <div style={{ marginBottom: "16px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        <span style={{ fontWeight: "600" }}>Menü İçeriği</span>
+                        <span style={{ color: "#999" }}>
+                          {selectedProducts.length} ÜRÜN
+                        </span>
+                      </div>
+
+                      {selectedProducts.length === 0 ? (
+                        <div
+                          style={{
+                            padding: "24px",
+                            textAlign: "center",
+                            color: "#999",
+                            border: "1px dashed #d9d9d9",
+                            borderRadius: "8px",
+                          }}
+                        >
+                          Sol taraftan ürün seçin
+                        </div>
+                      ) : (
+                        <div>
+                          {selectedProducts.map((item) => (
+                            <div
+                              key={item.product_id}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "12px",
+                                backgroundColor: "#f9f9f9",
+                                borderRadius: "8px",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: "500" }}>
+                                  {item.product_name}
+                                </div>
+                                <div style={{ fontSize: "12px", color: "#999" }}>
+                                  {item.product_price.toFixed(2)} TL
+                                </div>
+                              </div>
+                              <Space>
+                                <InputNumber
+                                  min={1}
+                                  value={item.quantity}
+                                  onChange={(value) =>
+                                    handleQuantityChange(item.product_id, value)
+                                  }
+                                  style={{ width: "80px" }}
+                                />
+                                <Button
+                                  danger
+                                  type="text"
+                                  icon={<MinusCircleOutlined />}
+                                  onClick={() =>
+                                    handleRemoveProduct(item.product_id)
+                                  }
+                                />
+                              </Space>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div
+                      style={{
+                        backgroundColor: "#f0f7ff",
+                        padding: "16px",
+                        borderRadius: "8px",
+                        marginBottom: "16px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          marginBottom: "8px",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <span>Ayrı Ayrı Toplam:</span>
+                        <span>{originalPrice.toFixed(2)} TL</span>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          fontSize: "20px",
+                          fontWeight: "700",
+                          color: "#1890ff",
+                        }}
+                      >
+                        <span>MENÜ ÖZEL FİYATI:</span>
+                        <span>{menuPrice.toFixed(2)} TL</span>
+                      </div>
+                      {discount > 0 && (
+                        <div
+                          style={{
+                            marginTop: "8px",
+                            fontSize: "12px",
+                            color: "#52c41a",
+                            textAlign: "center",
+                          }}
+                        >
+                          Müşteriniz bu menüyü seçerek {discount.toFixed(2)} TL
+                          kar edecek.
+                        </div>
+                      )}
+                    </div>
+
+                    <Form.Item name="is_active" label="MENÜ DURUMU">
+                      <Select>
+                        <Option value={true}>Satışa Açık (Aktif)</Option>
+                        <Option value={false}>Satışa Kapalı (Pasif)</Option>
+                      </Select>
+                    </Form.Item>
+
+                    <Form.Item label="GÖRSEL (DOSYA SEÇ)">
+                      <Upload {...uploadProps} listType="picture">
+                        <Button icon={<UploadOutlined />}>
+                          Fotoğraf Yükle
+                        </Button>
+                      </Upload>
+                    </Form.Item>
+
+                    <Divider />
+
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "12px",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <Button onClick={() => navigate("/admin/menus")}>
+                        İPTAL
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                        size="large"
+                      >
+                        MENÜYÜ KAYDET
+                      </Button>
+                    </div>
+                  </Card>
+                </Form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+};
+
+export default MenuForm;

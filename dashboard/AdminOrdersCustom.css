@@ -1,0 +1,918 @@
+/* AdminOrdersCustom.css - Sadece Siparişler Sayfası İçin Özel Stiller */
+
+/* ============================================
+   HEADER ALANI (Yorum satırına alındı)
+   ============================================ */
+/*
+.admin-orders-page /* .header removed */
+
+.admin-orders-page
+/* .header-title removed */
+
+.admin-orders-page .menu-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+/* ============================================
+   PAGE CONTROLS ALANI
+   ============================================ */
+.admin-orders-page .page-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-orders-page .view-toggles {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-orders-page .view-toggles button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-orders-page .view-toggles button:hover {
+  background: #f8f9fa;
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.admin-orders-page .view-toggles button.active {
+  background: #EBF5FF; /* Soft pastel blue */
+  border-color: #3498db;
+  color: #2980b9;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.admin-orders-page .search-and-filter {
+  display: flex;
+  gap: 15px;
+  flex: 1;
+  max-width: 600px;
+}
+
+.admin-orders-page .main-search-bar {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.admin-orders-page .main-search-bar:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.admin-orders-page .main-status-filter {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  min-width: 180px;
+}
+
+.admin-orders-page .main-status-filter:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+/* ============================================
+   TABLE - TABLO ALANI
+   ============================================ */
+.admin-orders-page .table-wrapper {
+  overflow: visible !important;
+  margin-bottom: 20px;
+}
+
+.admin-orders-page .orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  overflow: visible !important;
+}
+
+.admin-orders-page .orders-table th,
+.admin-orders-page .orders-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.admin-orders-page .orders-table th {
+  background: #f9fafb;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.admin-orders-page .orders-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.admin-orders-page .orders-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.admin-orders-page .orders-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================
+   DURUM (STATUS) DROPDOWN ALANI
+   ============================================ */
+.admin-orders-page .status-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.admin-orders-page .status-pill {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.admin-orders-page .status-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.admin-orders-page .status-pill .arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.admin-orders-page .status-pill .arrow.down {
+  border-top: 5px solid #fff;
+}
+
+.admin-orders-page .status-pill .arrow.up {
+  border-bottom: 5px solid #fff;
+}
+
+.admin-orders-page .status-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  min-width: 180px;
+  z-index: 10000; /* Çok yüksek z-index */
+  overflow: visible;
+  margin-top: 5px;
+}
+
+.admin-orders-page .status-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.admin-orders-page .status-dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.admin-orders-page .status-dropdown-item .status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Status renkleri */
+.admin-orders-page .status-pending {
+  background-color: #f39c12;
+}
+
+.admin-orders-page .status-preparing {
+  background-color: #3498db;
+}
+
+.admin-orders-page .status-on_the_way {
+  background-color: #9b59b6;
+}
+
+.admin-orders-page .status-delivered {
+  background-color: #2ecc71;
+}
+
+.admin-orders-page .status-cancelled {
+  background-color: #e74c3c;
+}
+
+/* ============================================
+   İŞLEMLER (ACTIONS) ALANI
+   ============================================ */
+.admin-orders-page .actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.admin-orders-page .action-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  /* Daha modern yuvarlama */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.05rem;
+}
+
+.admin-orders-page .action-icon-btn:hover {
+  transform: translateY(-1px);
+}
+
+.admin-orders-page .action-icon-btn.view-btn {
+  background-color: #eff6ff;
+  /* Soft blue bg */
+  color: #2563eb;
+  /* Tailwin text-blue-600 */
+}
+
+.admin-orders-page .action-icon-btn.view-btn:hover {
+  background-color: #dbeafe;
+  border-color: #bfdbfe;
+}
+
+.admin-orders-page .action-icon-btn.edit-btn {
+  background-color: #fff7ed;
+  /* Soft orange bg */
+  color: #ea580c;
+  /* Tailwind orange-600 */
+}
+
+.admin-orders-page .action-icon-btn.edit-btn:hover {
+  background-color: #ffedd5;
+  border-color: #fed7aa;
+}
+
+.admin-orders-page .action-icon-btn.print-btn {
+  background-color: #f3f4f6;
+  /* Soft gray bg */
+  color: #4b5563;
+  /* Tailwind gray-600 */
+}
+
+.admin-orders-page .action-icon-btn.print-btn:hover {
+  background-color: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.admin-orders-page .action-icon-btn.delete-btn {
+  background-color: #fef2f2;
+  /* Soft red bg */
+  color: #dc2626;
+  /* Tailwind red-600 */
+}
+
+.admin-orders-page .action-icon-btn.delete-btn:hover {
+  background-color: #fee2e2;
+  border-color: #fecaca;
+}
+
+/* ============================================
+   PAGINATION ALANI
+   ============================================ */
+.admin-orders-page .pagination-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+
+.admin-orders-page .pagination-info {
+  font-size: 0.95rem;
+  color: #5a6c7d;
+  font-weight: 500;
+  text-align: center;
+}
+
+.admin-orders-page .pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.admin-orders-page .pagination-controls button {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-orders-page .pagination-controls button:hover:not(:disabled) {
+  background: #f1f3f5;
+  border-color: #3498db;
+  color: #3498db;
+  transform: translateY(-2px);
+}
+
+.admin-orders-page .pagination-controls button.active {
+  background: #3498db;
+  color: #fff;
+  border-color: #3498db;
+  font-weight: 600;
+}
+
+.admin-orders-page .pagination-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f8f9fa;
+  color: #adb5bd;
+}
+
+.admin-orders-page .pagination-controls button:disabled:hover {
+  transform: none;
+  border-color: #ddd;
+}
+
+.admin-orders-page .pagination-controls .pagination-ellipsis {
+  min-width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+  font-size: 1rem;
+  user-select: none;
+}
+
+/* ============================================
+   LOADING, ERROR, NO DATA
+   ============================================ */
+.admin-orders-page .loading,
+.admin-orders-page .error,
+.admin-orders-page .no-data {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 1.1rem;
+}
+
+.admin-orders-page .loading {
+  color: #3498db;
+}
+
+.admin-orders-page .error {
+  color: #e74c3c;
+  background: #fee;
+  border-radius: 8px;
+}
+
+.admin-orders-page .no-data {
+  color: #7f8c8d;
+}
+
+/* ============================================
+   MODAL/PANEL - DETAY VE DÜZENLEME
+   ============================================ */
+.admin-orders-page .edit-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 600px;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-orders-page .edit-panel.open {
+  transform: translateX(0);
+}
+
+/* Panel Header */
+.admin-orders-page .edit-panel-header {
+  padding: 20px 25px;
+  border-bottom: 2px solid #3498db;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-orders-page .edit-panel-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.admin-orders-page .close-edit-panel {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 5px 10px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.admin-orders-page .close-edit-panel:hover {
+  color: #e74c3c;
+}
+
+/* Panel Content */
+.admin-orders-page .edit-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px;
+}
+
+/* Tek sütun form düzeni */
+.admin-orders-page .edit-panel-content>div {
+  margin-bottom: 20px;
+}
+
+.admin-orders-page .edit-panel-content label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.admin-orders-page .edit-panel-content textarea,
+.admin-orders-page .edit-panel-content select,
+.admin-orders-page .edit-panel-content input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.admin-orders-page .edit-panel-content textarea:focus,
+.admin-orders-page .edit-panel-content select:focus,
+.admin-orders-page .edit-panel-content input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.admin-orders-page .edit-panel-content textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Sipariş kalemleri */
+.admin-orders-page .edit-panel-content>div[style*="marginBottom: 20px"] {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+/* Butonlar */
+.admin-orders-page .edit-panel-content button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+/* Kaydet ve İptal butonları için özel stil */
+.admin-orders-page .edit-panel-content>div:last-child {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.admin-orders-page .edit-panel-content>div:last-child button {
+  flex: 1;
+  max-width: 150px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  height: 42px;
+}
+
+/* Kaydet butonu (mavi) */
+.admin-orders-page .edit-panel-content>div:last-child button:first-child {
+  background: #007bff;
+  color: #fff;
+}
+
+.admin-orders-page .edit-panel-content>div:last-child button:first-child:hover {
+  background: #0056b3;
+}
+
+/* İptal butonu (gri) */
+.admin-orders-page .edit-panel-content>div:last-child button:last-child {
+  background: #6c757d;
+  color: #fff;
+}
+
+.admin-orders-page .edit-panel-content>div:last-child button:last-child:hover {
+  background: #5a6268;
+}
+
+/* Detay paneli için özel stiller */
+.admin-orders-page .edit-panel-content p {
+  margin: 10px 0;
+  font-size: 0.9rem;
+  color: #495057;
+  line-height: 1.6;
+}
+
+.admin-orders-page .edit-panel-content p strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.close-sidebar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2000;
+  background: white;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* ============================================
+   RESPONSIVE TASARIM
+   ============================================ */
+@media (max-width: 1024px) {
+  .admin-orders-page .page-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-orders-page .search-and-filter {
+    max-width: 100%;
+  }
+
+  .admin-orders-page .view-toggles {
+    justify-content: center;
+  }
+
+  /* Modal - Tablet */
+  .admin-orders-page .edit-panel {
+    max-width: 500px;
+  }
+
+  .admin-orders-page .orders-table thead {
+    display: none;
+  }
+
+
+  .admin-orders-page .orders-table tbody tr {
+    display: block;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .admin-orders-page .orders-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border: none;
+  }
+
+  .admin-orders-page .orders-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #888;
+    font-size: 12px;
+  }
+
+
+}
+
+@media (max-width: 768px) {
+  .admin-orders-page
+  /* .header removed */
+
+  .admin-orders-page
+  /* .header-title removed */
+
+  .admin-orders-page .search-and-filter {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-orders-page .main-status-filter {
+    width: 100%;
+  }
+
+  .admin-orders-page .orders-table th,
+  .admin-orders-page .orders-table td {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .admin-orders-page .action-icon-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  .admin-orders-page .status-pill {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    min-width: 120px;
+  }
+
+  .admin-orders-page .pagination-container {
+    padding: 15px;
+    align-items: stretch;
+  }
+
+  .admin-orders-page .pagination-controls button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 0.85rem;
+  }
+
+  .admin-orders-page .pagination-controls {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-orders-page .pagination-controls button,
+  .admin-orders-page .pagination-controls .pagination-ellipsis {
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+  }
+
+  .admin-orders-page .pagination-info {
+    font-size: 0.85rem;
+  }
+
+  .admin-orders-page .view-toggles button {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+
+  /* Modal - Mobile */
+  .admin-orders-page .edit-panel {
+    max-width: 100%;
+  }
+
+  .admin-orders-page .edit-panel-header {
+    padding: 15px 20px;
+  }
+
+  .admin-orders-page .edit-panel-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .admin-orders-page .edit-panel-content {
+    padding: 20px;
+  }
+
+  .admin-orders-page .search-and-filter {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-orders-page .orders-table td {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .admin-orders-page .action-icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Masa düzeni */
+
+  .masa-view-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .salons-sidebar {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-right: none;
+  }
+
+  .tables-main {
+    width: 100% !important;
+    padding: 12px;
+  }
+
+  .order-details-wrapper {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-orders-page
+  /* .header-title removed */
+
+  .admin-orders-page .pagination-controls button {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    font-size: 0.8rem;
+  }
+
+  .admin-orders-page .pagination-controls {
+    gap: 5px;
+  }
+
+  .admin-orders-page .actions-cell {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .admin-orders-page .action-icon-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+
+  /* Modal - Küçük Mobile */
+  .admin-orders-page .edit-panel-header {
+    padding: 12px 15px;
+  }
+
+  .admin-orders-page .edit-panel-header h2 {
+    font-size: 1rem;
+  }
+
+  .admin-orders-page .edit-panel-content {
+    padding: 15px;
+  }
+
+  .admin-orders-page .edit-panel-content label,
+  .admin-orders-page .edit-panel-content input,
+  .admin-orders-page .edit-panel-content textarea,
+  .admin-orders-page .edit-panel-content select {
+    font-size: 0.85rem;
+  }
+
+  /* Butonlar mobilde tam genişlik */
+  .admin-orders-page .edit-panel-content>div:last-child button {
+    max-width: none;
+  }
+
+  .admin-orders-page .orders-table {
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .admin-orders-page .orders-table thead {
+    display: none;
+  }
+
+  .admin-orders-page .orders-table tbody tr {
+    display: block;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .admin-orders-page .orders-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border: none;
+  }
+
+  .admin-orders-page .orders-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #888;
+    font-size: 12px;
+  }
+
+  .admin-orders-page .actions-cell {
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .admin-orders-page .tables-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loyalty Page Tabs Responsive */
+@media (max-width: 768px) {
+    .loyalty-tabs .ant-tabs-nav-list {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .loyalty-tabs .ant-tabs-tab {
+        margin: 0 4px 0 0 !important;
+        padding: 8px 12px !important;
+        flex: 0 0 auto !important;
+    }
+
+    .loyalty-card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .loyalty-card-actions {
+        width: 100%;
+    }
+
+    .loyalty-card-actions button {
+        flex: 1;
+    }
+}
+
+
