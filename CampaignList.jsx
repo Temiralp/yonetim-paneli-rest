@@ -9,7 +9,7 @@ import Sidebar from '../dashboard/Sidebar';
 import { AuthContext } from '../../context/AuthContext';
 import '../dashboard/AdminOrdersCustom.css';
 import '../dashboard/Orders.css';
-test
+
 const CampaignList = () => {
     const { admin } = useContext(AuthContext);
     const navigate = useNavigate();

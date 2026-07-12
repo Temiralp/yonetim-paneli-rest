@@ -1,4 +1,5 @@
 test
+<<<<<<< HEAD
 
 
 
@@ -16,3 +17,6 @@ test 2 eklendi
 
 test 3 eklendi
 
+=======
+idil
+>>>>>>> 79ad45d2d28ca6ba7b7e194749045058e62b5107
