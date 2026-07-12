@@ -18,14 +18,7 @@ const CampaignList = () => {
     const [showWizard, setShowWizard] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
     const [activeTab, setActiveTab] = useState('1');
-const CampaignList = () => {
-    const { admin } = useContext(AuthContext);
-    const navigate = useNavigate();
-    const [campaigns, setCampaigns] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [showWizard, setShowWizard] = useState(false);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
-    const [activeTab, setActiveTab] = useState('1');
+
     useEffect(() => {
         const handleResize = () => {
             setIsSidebarOpen(window.innerWidth > 1024);
